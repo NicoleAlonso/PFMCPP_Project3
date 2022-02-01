@@ -36,51 +36,51 @@ Sub Object 1: Steering Wheel
     Name 4 things you'll find on the:    Steering Wheel
         1) paddle shifters
         2) 'cruise control' controls
-        3) 
-        4) 
+        3) turn signal lever
+        4) horn
     Name 2 things you can do with the:   Steering Wheel
         1) adjust cruise control settings.
-        2)
+        2) honk the horn
         
 Sub Object 2: Instrument Cluster
     Name 4 things you'll find on the:   Instrument Cluster
-        1)
-        2)
-        3)
-        4)
+        1) speedometer
+        2) tachometer
+        3) fuel level display
+        4) engine temperature display
     Name 3 things you can do with the:   Instrument Cluster
-        1)
-        2)
-        3)
+        1) read current fuel level status
+        2) read current driving speed
+        3) read how many km/miles the car has traveled
     
 Sub Object 3: Environment Controls
     Name 3 things you'll find on the:    Environment Controls
-        1)
-        2)
-        3)
+        1) A/C temperature control
+        2) air flow vent selector
+        3) fan speed control
     Name 3 things you can do with the:   Environment Controls
-        1)
-        2)
-        3)
+        1) adjust temperature
+        2) select air flow direction
+        3) adjust the fan speed
 
 Sub Object 4: Infotainment System
     Name 3 things you'll find on the:    Infotainment System
-        1)
-        2)
-        3)
+        1) navigation system
+        2) radio
+        3) bluetooth connection
     Name 3 things you can do with the:   Infotainment System
-        1)
-        2)
-        3)
+        1) display navigation to travel destination
+        2) turn on music
+        3) make a phone call with hands-free mode
 
 Sub Object 5: Seat 
     Name 3 things you'll find on the:    Seat
-        1)
-        2)
-        3)
+        1) seatbelt
+        2) seatbase
+        3) backrest
     Name 2 things you can do with the:   Seat
-        1)
-        2)
+        1) adjust backrest
+        2) adjust seat height
 */
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
