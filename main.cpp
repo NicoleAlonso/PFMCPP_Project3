@@ -57,59 +57,59 @@ Thing: Car Wash
  */
 
 /*
-Thing 1)
+Thing 1) Coffee Machine
 5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
+    1) brand name
+    2) amount of water the reservoir can contain
+    3) number of water tubes
+    4) number of holes in drip area
+    5) power of heating element
 3 things it can do:
-    1)
-    2)
-    3)
+    1) heats up water
+    2) drips water over coffee grounds
+    3) keeps coffee warm
  */
 
 /*
-Thing 2)
+Thing 2) Cargo Ship
 5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
+    1) size of deck
+    2) size of fuel tank
+    3) amount of cargo
+    4) ship name
+    5) captain name
 3 things it can do:
-    1)
-    2)
-    3)
+    1) transports goods
+    2) load/unload goods
+    3) burns fuel
  */
 
 /*
-Thing 3)
+Thing 3) Computer
 5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
+    1) amount of storage
+    2) processor speed
+    3) display-size
+    4) amount of keys
+    5) name of manufacturer
 3 things it can do:
-    1)
-    2)
-    3)
+    1) store data
+    2) process data
+    3) display data
  */
 
 /*
-Thing 4)
+Thing 4) Hotel
 5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
+    1) amount of single bedrooms
+    2) amount of double bedrooms
+    3) number of roomkeys
+    4) amount of daily customers
+    5) name of receptionist
 3 things it can do:
-    1)
-    2)
-    3)
+    1) provides lodging
+    2) serves breakfast
+    3) charges guest
  */
 
 
