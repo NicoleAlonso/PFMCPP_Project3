@@ -81,79 +81,6 @@ Part1 will be broken up into 5 separate steps
 */
 
 /*
-Thing 5)
-5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
-3 things it can do:
-    1)
-    2)
-    3)
- */
-
-/*
-Thing 6)
-5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
-3 things it can do:
-    1)
-    2)
-    3)
- */
-
-/*
-Thing 7)
-5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
-3 things it can do:
-    1)
-    2)
-    3)
- */
-
-/*
-Thing 8)
-5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
-3 things it can do:
-    1)
-    2)
-    3)
- */
-
-/*
-Thing 9)
-5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
-3 things it can do:
-    1)
-    2)
-    3)
- */
-
-
-
-
-/*
 Thing 1) Coffee Machine
 5 properties:
     1) brand name (std::string)
@@ -207,6 +134,76 @@ Thing 4) Hotel
     1) provides lodging
     2) serves breakfast
     3) charges guest
+ */
+
+/* 
+Thing 5) Rendering Engine
+5 properties:
+    1) Lighting Type (std::string)
+    2) Amount of Particles (double)
+    3) Material Texture (std::string)
+    4) Amount of Bloom effect (float)
+    5) Degrees of Camera View Field (float)
+3 things it can do:
+    1) render lighting
+    2) render material texture
+    3) update camera view position
+ */
+
+/*
+Thing 6) Physics Engine
+5 properties:
+    1) Physics Type (std::string)
+    2) Collision Response Type (std::string)
+    3) Amount of Gravity (float)
+    4) Amount of Surface Friction (float)
+    5) Raytracing Distance (float)
+3 things it can do:
+    1) detect collision
+    2) set gravity
+    3) destroy object
+ */
+
+/*
+Thing 7) Audio Engine
+5 properties:
+    1) Number of I/O Channels (int)
+    2) Volume (float)
+    3) Pitch Multiplier (float)
+    4) Attenuation (float)
+    5) Audio Buffer Size (double)
+3 things it can do:
+    1) import soundfile
+    2) edit soundfile
+    3) playback sound
+ */
+
+/*
+Thing 8) Networking System
+5 properties:
+    1) Network Mode (std::string)
+    2) Priority Status (int)
+    3) Read Buffer Size (double)
+    4) Send Rate (float)
+    5) Protocol Type (std::string)
+3 things it can do:
+    1) enable multiplayer mode
+    2) share game state info
+    3) send data to server
+ */
+
+/*
+Thing 9) AI
+5 properties:
+    1) Acceptance Radius (float)
+    2) Focal Point (float)
+    3) Movement Velocity (int)
+    4) Perception Properties (std::string)
+    5) Stimuli Age (int)
+3 things it can do:
+    1) get target location
+    2) move to target
+    3) set focal point
  */
 
 /*
