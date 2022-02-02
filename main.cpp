@@ -65,30 +65,13 @@ Part1 will be broken up into 5 separate steps
 */
 
 /*
-Thing 10)
-5 properties:
-    1)
-    2)
-    3)
-    4)
-    5)
-3 things it can do:
-    1)
-    2)
-    3)
- */
-
-
-
-
-/*
 Thing 1) Coffee Machine
 5 properties:
-    1) brand name
-    2) amount of water the reservoir can contain
-    3) number of water tubes
-    4) number of holes in drip area
-    5) power of heating element
+    1) brand name (std::string)
+    2) amount of water the reservoir can contain (float)
+    3) number of water tubes (int)
+    4) number of holes in drip area (int)
+    5) power of heating element (float)
 3 things it can do:
     1) heats up water
     2) drips water over coffee grounds
@@ -98,11 +81,11 @@ Thing 1) Coffee Machine
 /*
 Thing 2) Cargo Ship
 5 properties:
-    1) size of deck
-    2) size of fuel tank
-    3) amount of cargo
-    4) ship name
-    5) captain name
+    1) size of deck (float)
+    2) size of fuel tank (float)
+    3) amount of cargo (int)
+    4) ship name (std::string)
+    5) captain name (std::string)
 3 things it can do:
     1) transports goods
     2) load/unload goods
@@ -112,11 +95,11 @@ Thing 2) Cargo Ship
 /*
 Thing 3) Computer
 5 properties:
-    1) amount of storage
-    2) processor speed
-    3) display-size
-    4) amount of keys
-    5) name of manufacturer
+    1) amount of storage (double)
+    2) processor speed (float)
+    3) display-size (float)
+    4) amount of keys (int)
+    5) name of manufacturer (std::string)
 3 things it can do:
     1) store data
     2) process data
@@ -126,16 +109,31 @@ Thing 3) Computer
 /*
 Thing 4) Hotel
 5 properties:
-    1) amount of single bedrooms
-    2) amount of double bedrooms
-    3) number of roomkeys
-    4) amount of daily customers
-    5) name of receptionist
+    1) amount of single bedrooms (int)
+    2) amount of double bedrooms (int)
+    3) number of roomkeys (int)
+    4) amount of daily customers (int)
+    5) name of receptionist (std::string)
 3 things it can do:
     1) provides lodging
     2) serves breakfast
     3) charges guest
  */
+
+/*
+Thing 10) Game Engine
+5 properties:
+    1) Rendering Engine
+    2) Physics Engine
+    3) Audio Engine
+    4) Networking System
+    5) AI
+3 things it can do:
+    1) edit graphics
+    2) implement audio
+    3) get user input
+ */
+
 
 
 
