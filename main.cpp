@@ -107,8 +107,58 @@ struct CarWash
     you should be able to deduce the return type of those functions based on their usage in Person::run()
     You'll need to insert the Person struct from the video in the space below.
  */
+struct Person
+{
+    int age;
+    int height;
+    float hairLength;
+    float GPA;
+    unsigned int SATScore;
+    int distanceTraveled;
 
+    struct Foot
+    {
+        int stepLength = 3;
+        int footPosition = 0;
+        int numSteps = 0;
 
+        void stepForward();
+        int stepSize();
+    };
+
+    Foot leftFoot;
+    Foot rightFoot;
+
+    void run(int howFast, bool startWithLeftFoot);
+};
+
+void Person::Foot::stepForward()
+{
+    ++footPosition;
+    ++numSteps;
+}
+
+int Person::Foot::stepSize()
+{
+    return stepLength;
+}
+
+void Person::run(int howFast, bool startWithLeftFoot)
+{
+    if(startWithLeftFoot)
+    {
+        leftFoot.stepForward();
+        rightFoot.stepForward();
+    }
+    else
+    {
+        rightFoot.stepForward();
+        leftFoot.stepForward();
+    }
+    
+    distanceTraveled += leftFoot.stepSize() + rightFoot.stepSize();
+    howFast = leftFoot.numSteps + rightFoot.numSteps + distanceTraveled;
+}
 
 
 
@@ -126,30 +176,13 @@ struct CarWash
  */
 
 
-/*
-Thing 1) Coffee Machine
-5 properties:
-    1) brand name (std::string)
-    2) amount of water the reservoir can contain (float)
-    3) number of water tubes (int)
-    4) number of holes in drip area (int)
-    5) power of heating element (float)
-3 things it can do:
-    1) heats up water
-    2) drips water over coffee grounds
-    3) keeps coffee warm
- */
+
 struct CoffeeMachine
 {
-    // brand name
     std::string brandName {"Krups"};
-    // amount of water the reservoir can contain 
     float waterReservoirCapacity {2839.06f};
-    // number of water tubes 
     int waterTubes {2};
-    // number of holes in drip area 
     int numDripHoles {12};
-    // power of heating element 
     float wattsOfHeatingElement {1200.0f};
 
     struct Settings
@@ -160,44 +193,55 @@ struct CoffeeMachine
         float waterHardnessSetting {2.5f};
         float waterFlowSpeed {0.8f};
 
-        void setTimer(float brewStart = 0, int minutesUntilShutOff = 20);
+        void setTimer(int brewStart = 0, int minutesUntilShutOff = 20);
         void setBrewStrength(int brewStrength);
-        bool flashDescalingIndicator(int waterHardness, int numCyclesMade); //returns true if the machine should run descaling program
+        bool flashDescalingIndicator(int waterHardness, int numCyclesMade); 
     };
 
-    // heat up water
     void heatWater(float tempInCelsius = 93.4f);
-    // drip water over coffee grounds
     void dripWater(Settings brewSettings, int dripInterval = 2);
-    // keep coffee warm
     void maintainHeat(float timeToMaintain = 5.5f, float tempInCelsius = 85.0f);
 
     Settings newBrewSettings;
 };
-/*
-Thing 2) Cargo Ship
-5 properties:
-    1) size of deck (float)
-    2) size of fuel tank (float)
-    3) amount of cargo (int)
-    4) ship name (std::string)
-    5) captain name (std::string)
-3 things it can do:
-    1) transports goods
-    2) load/unload goods
-    3) burns fuel
- */
+
+void CoffeeMachine::Settings::setTimer(int startTime, int shutOffTime)
+{
+    minutesUntilShutOff = shutOffTime - startTime;
+}
+
+void CoffeeMachine::Settings::setBrewStrength(int newBrewStrength)
+{
+    brewStrength = newBrewStrength;
+    waterFlowSpeed = brewStrength * 0.2f;
+}
+
+bool CoffeeMachine::Settings::flashDescalingIndicator(int waterHardness, int numCyclesMade)
+{
+    if (numCyclesMade * waterHardness > 100)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+void CoffeeMachine::heatWater(float heatTemp)
+{
+    wattsOfHeatingElement /= heatTemp * 90;
+}
+
+void CoffeeMachine::dripWater(Settings waterSettings, int dripPerSec)
+{
+    waterSettings.waterFlowSpeed += dripPerSec * numDripHoles;
+}
+
 struct CargoShip
 {
-    // size of deck 
     float deckSize {12000.0f};
-    // size of fuel tank in million unit
     float fuelTankSize {1.7f};
-    // amount of cargo 
     int numOfCargoContainers {1875};
-    // ship name 
     std::string shipName {"Neptuno"};
-    // captain name 
     std::string captainName {"James Cook"};
 
     struct CargoContent
@@ -208,283 +252,341 @@ struct CargoShip
         std::string constructionMaterial {"wood"};
         std::string furniture {"sofa"};
 
-        bool contentIsFlammable(std::string category, int igniteLevel = 1); //returns if the transported goods are flammable or not
-        bool contentIsToxic(std::string toxicityType, int classRating = 4); //returns if the transported goods are toxic or not
-        float numItemsPerContainer(int numItems, float singleItemSize, float containerSize = 38.5f); // returns how many goods fit into one container
+        bool contentIsFlammable(std::string category, int igniteLevel = 1); 
+        bool contentIsToxic(std::string toxicityType, int classRating = 4); 
+        float numItemsPerContainer(int numItems, float singleItemSize, float containerSize = 38.5f); 
     };
 
-    // transport goods
     void transportGoods(CargoContent ikeaItems, int amountOfContainers);
-    // load/unload goods
     void handleGoods(CargoContent fridges, int amountOfContainers, bool shipIsEmpty = true);
-    // burn fuel
     void burnFuel(float consumptionPerKm, float travelDistance, bool shipIsLoaded = true);
 
     CargoContent nextCargoLoad;
 };
-/*
-Thing 3) Computer
-5 properties:
-    1) amount of storage (double)
-    2) processor speed (float)
-    3) display-size (float)
-    4) amount of keys (int)
-    5) name of manufacturer (std::string)
-3 things it can do:
-    1) store data
-    2) process data
-    3) display data
- */
+
+bool CargoShip::CargoContent::contentIsFlammable(std::string category, int igniteLevel)
+{
+    if(igniteLevel > 2 && category == "liquids")
+    {
+        return true;
+    }
+    else if(igniteLevel > 3 && category == "solids")
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool CargoShip::CargoContent::contentIsToxic(std::string toxicityType, int classRating)
+{
+    if(classRating > 4 && toxicityType == "biohazard")
+    {
+        return true;
+    }
+    else if(classRating > 5 && toxicityType == "corrosive")
+    {
+        return true;
+    }
+
+    return false;
+}
+
+float CargoShip::CargoContent::numItemsPerContainer(int numItems, float singleItemSize, float containerSize)
+{
+    return (containerSize/singleItemSize) * numItems;
+}
+
+void CargoShip::transportGoods(CargoContent kitchenItems, int amountOfContainers)
+{
+    kitchenItems.electronics = "toaster";
+    kitchenItems.furniture = "cupboard";
+    numOfCargoContainers = amountOfContainers;
+}
+
+void CargoShip::handleGoods(CargoContent buildingMaterial, int numContainersToLoad, bool shipIsEmpty)
+{
+    buildingMaterial.constructionMaterial = "cement blocks";
+    
+    if(shipIsEmpty)
+    {
+       numContainersToLoad /= deckSize; // ship loads amount that fits on deck size
+    }
+    else
+    {
+        numContainersToLoad *= -1 ; // means ship unloads the amount of containers
+    }
+}
+
+void CargoShip::burnFuel(float consumptionPerKm, float travelDistance, bool shipIsLoaded)
+{
+    float fuelBurned;
+    
+    if(!shipIsLoaded)
+    {
+        fuelBurned = (consumptionPerKm * 0.8f) * travelDistance;
+    }
+     
+    fuelBurned = consumptionPerKm * travelDistance;
+}
+
 struct Computer
 {
-    // amount of storage 
     double storageInGb {500.0};
-    // processor speed 
     float processorSpeed {3.5f};
-    // display-size 
     float displaySize {13.0f};
-    // amount of keys 
     int numKeys {101};
-    // name of manufacturer
     std::string manufacturer {"Apple"};
 
-    void storeData(int numFiles, std::string fileName = "unknown");
+    void storeData(int numFiles, int fileSize, std::string fileName = "unknown");
     void processData(float amountToProcess, float timeToProcess = 0.02f);
     void displayData(std::string fileName = "unknown", bool fullscreen = false);
 };
-/*
-Thing 4) Hotel
-5 properties:
-    1) amount of single bedrooms (int)
-    2) amount of double bedrooms (int)
-    3) number of roomkeys (int)
-    4) amount of daily customers (int)
-    5) name of receptionist (std::string)
-3 things it can do:
-    1) provides lodging
-    2) serves breakfast
-    3) charges guest
- */
+
+void Computer::storeData(int numFiles, int fileSize, std::string fileName)
+{
+    std::string database = "added " + fileName;
+    storageInGb -= numFiles * fileSize;
+}
+
+void Computer::processData(float amountToProcess, float timeToProcess)
+{
+    processorSpeed = amountToProcess * timeToProcess;
+}
+
 struct Hotel
 {
-    // amount of single bedrooms 
     int numSingleRooms {46};
-    // amount of double bedrooms 
     int numDoubleRooms {62};
-    // number of roomkeys 
-    int numRoomkeys {108};
-    // amount of daily customers 
     int numDailyGuests {77};
-    // name of receptionist
+    float priceDiscount {5.0f};
     std::string receptionistName {"Gabriel"};
 
-    // provide lodging
     void provideLodging(Computer registerGuest, int daysToStay = 2, bool isDoubleRoom = true);
-    // serve breakfast
-    void serveBreakfast(int numGuestToServe = 65, bool isVegan = false);
-    // charge guest
+    void serveBreakfast(int numGuestToServe = 65, bool isSober = true);
     void chargeGuest(int amountOfDays, float pricePerDay, bool usedRoomService = false, float priceRoomService = 25.5f);
 };
-/* 
-Thing 5) Rendering Engine
-5 properties:
-    1) Lighting Type (std::string)
-    2) Amount of Particles (double)
-    3) Material Texture (std::string)
-    4) Amount of Bloom effect (float)
-    5) Degrees of Camera View Field (float)
-3 things it can do:
-    1) render lighting
-    2) render material texture
-    3) update camera view position
- */
+
+void Hotel::provideLodging(Computer registerGuest, int daysToStay, bool isDoubleRoom)
+{
+    registerGuest.storeData(1, 24, "new guest");
+    
+    if(daysToStay > 10)
+        priceDiscount = 15.0f;
+
+    if(isDoubleRoom)
+        --numDoubleRooms;
+}
+
+void Hotel::serveBreakfast(int numGuestToServe, bool isSober)
+{
+    if(!isSober)
+        --numGuestToServe;
+}
+
 struct RenderingEngine
 {
-    // Lighting Type 
     std::string lightingType {"spot light"};
-    // Amount of Particles (double)
     double particleAmount {2300.0};
-    // Material Texture 
-    std::string materialTexture {"grass"};
-    // Amount of Bloom effect 
+    std::string materialTexture {"grass"}; 
     float bloomAmountInPercentage {10.0f};
-    // Degrees of Camera View Field 
     float cameraViewField {180.0f};
 
-    //render lighting
     void renderLights(std::string lightingType, int renderQuality = 4);
-    // render material texture
-    void renderMaterialTexture(std::string materialTexture = "stone", int renderQuality = 4);
-    // update camera view position
+    void renderMaterialTexture(std::string materialTexture = "stone", int renderQuality = 4, int numPolygons = 100);
     void updateCameraViewPosition(float cameraViewField, float positionX = 0.0f, float positionY = 0.0f);
 };
-/*
-Thing 6) Physics Engine
-5 properties:
-    1) Physics Type (std::string)
-    2) Collision Response Type (std::string)
-    3) Amount of Gravity (float)
-    4) Amount of Surface Friction (float)
-    5) Raytracing Distance (float)
-3 things it can do:
-    1) detect collision
-    2) set gravity
-    3) destroy object
- */
+
+void RenderingEngine::renderLights(std::string lightToRender, int renderQuality)
+{
+    lightingType = lightToRender;
+    bloomAmountInPercentage *= renderQuality;
+}
+
+void RenderingEngine::renderMaterialTexture(std::string textureToRender, int renderQuality, int numPolygons)
+{
+    materialTexture = textureToRender;
+    numPolygons *= renderQuality;
+}
+
+void RenderingEngine::updateCameraViewPosition(float currentViewField, float positionX, float positionY)
+{
+    cameraViewField = currentViewField + positionX + positionY;
+}
+
 struct PhysicsEngine
 {
-    // Physics Type 
     std::string physicsType {"default"};
-    // Collision Response Type 
     std::string collisionResponse {"block"};
-    // Amount of Gravity 
     float gravity {1.0f};
-    // Amount of Surface Friction 
     float friction {4.0f};
-    // Raytracing Distance 
     float raytracingDistance {100.0f};
 
-    //detect collision
     void detectCollision(float raytracingDistance);
-    // set gravity
     void setGravity(float gravity);
-    // destroy object
     void destroyObject(std::string collisionResponse = "hit", std::string physicsType = "simulated", int impactForce = 9);
 };
-/*
-Thing 7) Audio Engine
-5 properties:
-    1) Number of I/O Channels (int)
-    2) Volume (float)
-    3) Pitch Multiplier (float)
-    4) Attenuation (float)
-    5) Audio Buffer Size (double)
-3 things it can do:
-    1) import soundfile
-    2) edit soundfile
-    3) playback sound
- */
+
+void PhysicsEngine::detectCollision(float maxTracingDistance)
+{
+    if(raytracingDistance >= maxTracingDistance)
+    {
+        collisionResponse = "ignore";
+    }
+}
+
+void PhysicsEngine::setGravity(float newGravityVal)
+{
+    gravity = newGravityVal;
+}
+
+void PhysicsEngine::destroyObject(std::string collisionType, std::string physicsSetting, int impactForce)
+{
+    collisionResponse = collisionType;
+    physicsType = physicsSetting;
+
+    if(collisionResponse == "explode" && impactForce < 10)
+        impactForce *= 10;
+}
+
 struct AudioEngine
 {
-    // Number of I/O Channels 
     int numChannels {2};
-    // Volume 
     float volumeInDb {-18.0f};
-    // Pitch Multiplier 
     float pitchMultiplier {1.0f};
-    // Attenuation 
     float attenuationInDb {3.0f};
-    // Audio Buffer Size 
     double audioBufferSize {256.0};
 
-    // import soundfile
-    void importSoundfile(std::string filePath, std::string fileName, float fileSizeInKb = 894.4f);
-    // edit soundfile
+    void importSoundfile(std::string filePath, std::string fileName, int numChannels);
     void editSound(float pitchMultiplier, float attenuationInDb = 6.0f);
-    // playback sound
-    void playSound(double audioBufferSize, int numChannels, float volumeInDb = -3.0f, bool loopSound = false);
+    void playSound(double audioBufferSize, int numChannels, float volumeInDb = -3.0f, bool isAlreadyPlaying = false);
 };
-/*
-Thing 8) Networking System
-5 properties:
-    1) Network Mode (std::string)
-    2) Priority Status (int)
-    3) Read Buffer Size (double)
-    4) Send Rate (float)
-    5) Protocol Type (std::string)
-3 things it can do:
-    1) enable multiplayer mode
-    2) share game state info
-    3) send data to server
- */
+
+void AudioEngine::importSoundfile(std::string filePath, std::string fileName, int audioChannels)
+{
+    if(filePath == "")
+    {
+        std::cout << "path not found";
+        return;
+    }   
+    
+    std::string typeSuffix = "SFX_" + fileName;
+    numChannels = audioChannels;
+}
+void AudioEngine::editSound(float newPitchValue, float fasterAttenuation)
+{
+    pitchMultiplier = newPitchValue;
+    attenuationInDb = fasterAttenuation;
+}
+
+void AudioEngine::playSound(double bufferSizeSetting, int outputChannels, float outputVol, bool isAlreadyPlaying)
+{
+    if(isAlreadyPlaying)
+    {
+        std::cout << "Sound already playing. Execution cancelled";
+        return;
+    }
+    
+    audioBufferSize = bufferSizeSetting;
+    numChannels = outputChannels;
+    volumeInDb = outputVol;
+
+}
+
 struct NetworkingSystem
 {
-    // Network Mode 
     std::string networkMode {"standalone"};
-    // Priority Status 
-    int priorityStatus {1};
-    // Read Buffer Size 
-    double readBufferSize {1024};
-    // Send Rate 
-    float sendRate {60.0f};
-    // Protocol Type 
+    int priorityStatus {1}; 
+    float readBufferSize {1024};
+    float sendRate {60.0f}; 
     std::string protocolType {"UDP"};
 
-    // enable multiplayer mode
     void setMultiplayerMode(std::string networkMode = "server", int numOfPlayers = 2);
-    // share game state info
-    void shareGameState();
-    // send data to server
+    std::string shareGameState(std::string platform = "Nintendo");
     void sendDataToServer(float sendRate, float dataSize);
 };
-/*
-Thing 9) AI
-5 properties:
-    1) Acceptance Radius (float)
-    2) Focal Point (float)
-    3) Movement Velocity (int)
-    4) Perception Properties (std::string)
-    5) Stimuli Age (int)
-3 things it can do:
-    1) get target location
-    2) move to target
-    3) set focal point
- */
+
+void NetworkingSystem::setMultiplayerMode(std::string userMode, int numOfPlayers)
+{
+    networkMode = userMode;
+    if(numOfPlayers > 4)
+        sendRate = 72.0f;
+}
+
+std::string NetworkingSystem::shareGameState(std::string platform)
+{
+    return platform;
+}
+
+void NetworkingSystem::sendDataToServer(float currentSendRate, float dataSize)
+{
+    readBufferSize = currentSendRate * dataSize;
+}
+
 struct AI
 {
-    // Acceptance Radius 
     float acceptanceRadius {90.0f};
-    // Focal Point 
     float focalPoint {1.0f};
-    // Movement Velocity 
     int moveVelocity {5};
-    // Perception Properties 
     std::string perceptionProperty {"hearing sense"};
-    // Stimuli Age (time until perceived sense is forgotten) 
     float stimuliAgeInSec {5.0f};
 
-    // get target location
-    float getTargetLocation(float positionX = 10.0f, float positionY = 10.0f); //returns current target position 
-    // move to target
+    float getTargetLocation(float positionX = 10.0f, float positionY = 10.0f); 
     void moveToTarget(int moveVelocity, float acceptanceRadius = 50.5f);
-    // set focal point
     void setFocalPoint(float focalPoint, float oldPosition, float newPosition);
 };
-/*
-Thing 10) Game Engine
-5 properties:
-    1) Rendering Engine
-    2) Physics Engine
-    3) Audio Engine
-    4) Networking System
-    5) AI
-3 things it can do:
-    1) edit graphics
-    2) implement audio
-    3) get user input
- */
+
+float AI::getTargetLocation(float positionX, float positionY)
+{
+    return positionX * positionY;
+} 
+
+void AI::moveToTarget(int chaseVelocity, float newRadius)
+{
+    acceptanceRadius = newRadius;
+    moveVelocity = chaseVelocity;
+    if (acceptanceRadius < 10.0f)
+    {
+        moveVelocity += 2;
+    }
+}
+
+void AI::setFocalPoint(float newTargetPoint, float oldPosition, float newPosition)
+{
+    focalPoint = (newTargetPoint - oldPosition) + newPosition;
+}
+
 struct GameEngine
 {
-    // Rendering Engine
     RenderingEngine renderingEngine;
-    // Physics Engine
     PhysicsEngine physicsEngine;
-    // Audio Engine
     AudioEngine audioEngine;
-    // Networking System
     NetworkingSystem networking;
-    // AI
     AI arificialIntelligence;
 
-    //edit graphics
     void editGraphics(RenderingEngine renderingEngine);
-    // implement audio
     void implementAudio(AudioEngine audioEngine, std::string triggerEventName = "footsteps");
-    // get user input
     void getUserInput(NetworkingSystem networkSettings, std::string controllerType = "PS4");
 };
 
+void GameEngine::editGraphics(RenderingEngine newTexture)
+{
+    newTexture.renderMaterialTexture("water", 6);
+}
 
+void GameEngine::implementAudio(AudioEngine implementSFX, std::string triggerEventName)
+{
+    implementSFX.importSoundfile("/Sounds/SFX", triggerEventName, 2);
+}
+
+void GameEngine::getUserInput(NetworkingSystem networkSettings, std::string controllerType)
+{
+   std::string userPlatform = networkSettings.shareGameState();
+   if(userPlatform != controllerType)
+   {
+       std::cout << "Cannot connect controller to platform. Type mismatch";
+   }
+}
 
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
