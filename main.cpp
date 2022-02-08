@@ -100,7 +100,7 @@ struct CoffeeMachine
     void dripWater(Settings brewSettings, int dripInterval = 2);
     void maintainHeat(float timeToMaintain = 5.5f, float tempInCelsius = 85.0f);
 
-    Settings newBrewSettings;
+    //Settings newBrewSettings;
 };
 
 CoffeeMachine::CoffeeMachine()
@@ -182,7 +182,7 @@ struct CargoShip
     void handleGoods(CargoContent fridges, int amountOfContainers, bool shipIsEmpty = true);
     void burnFuel(float consumptionPerKm, float travelDistance, bool shipIsLoaded = true);
 
-    CargoContent nextCargoLoad;
+    //CargoContent nextCargoLoad;
 };
 
 CargoShip::CargoShip()
