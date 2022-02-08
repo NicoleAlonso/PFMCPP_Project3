@@ -97,10 +97,10 @@ struct CoffeeMachine
     };
 
     void heatWater(float tempInCelsius = 93.4f);
-    void dripWater(Settings brewSettings, int dripInterval = 2);
+    void dripWater(int dripInterval = 2);
     void maintainHeat(float timeToMaintain = 5.5f, float tempInCelsius = 85.0f);
 
-    //Settings newBrewSettings;
+    Settings newBrewSettings;
 };
 
 CoffeeMachine::CoffeeMachine()
@@ -143,10 +143,10 @@ void CoffeeMachine::heatWater(float heatTemp)
     std::cout << "CoffeeMachine::Settings::flashDescalingIndicator(): " << wattsOfHeatingElement << std::endl;
 }
 
-void CoffeeMachine::dripWater(Settings waterSettings, int dripPerSec)
+void CoffeeMachine::dripWater(int dripPerSec)
 {
-    waterSettings.waterFlowSpeed += dripPerSec * numDripHoles;
-    std::cout << "CoffeeMachine::dripWater(): " << waterSettings.waterFlowSpeed << std::endl;
+    newBrewSettings.waterFlowSpeed += dripPerSec * numDripHoles;
+    std::cout << "CoffeeMachine::dripWater(): " << newBrewSettings.waterFlowSpeed << std::endl;
 }
 
 void CoffeeMachine::maintainHeat(float timeToMaintain, float tempInCelsius)
@@ -157,7 +157,7 @@ void CoffeeMachine::maintainHeat(float timeToMaintain, float tempInCelsius)
 
 struct CargoShip
 {
-    float deckSize {12000.0f};
+    int deckSize {12000};
     float fuelTankSize {1.7f};
     int numOfCargoContainers {1875};
     std::string shipName {"Neptuno"};
@@ -166,23 +166,21 @@ struct CargoShip
 
     struct CargoContent
     {
-        std::string electronics {"home appliances"};
-        std::string clothing {"t-shirts"};
-        std::string food {"vegetables"};
-        std::string constructionMaterial {"wood"};
-        std::string furniture {"sofa"};
+        std::string contentA{"home appliances"};
+        std::string contentB {"t-shirts"};
+        int numItems {3500};
         CargoContent();
 
         bool contentIsFlammable(std::string category, int igniteLevel = 1); 
         bool contentIsToxic(std::string toxicityType, int classRating = 4); 
-        float numItemsPerContainer(int numItems, float singleItemSize, float containerSize = 38.5f); 
+        float numItemsPerContainer(float singleItemSize, float containerSize = 38.5f); 
     };
 
-    void transportGoods(CargoContent ikeaItems, int amountOfContainers);
-    void handleGoods(CargoContent fridges, int amountOfContainers, bool shipIsEmpty = true);
+    void transportGoods(std::string contentTypeA, std::string contentTypeB, int amountOfContainers);
+    void handleGoods(int amountOfContainers, bool shipIsEmpty = true);
     void burnFuel(float consumptionPerKm, float travelDistance, bool shipIsLoaded = true);
 
-    //CargoContent nextCargoLoad;
+    CargoContent nextCargoLoad;
 };
 
 CargoShip::CargoShip()
@@ -227,34 +225,33 @@ bool CargoShip::CargoContent::contentIsToxic(std::string toxicityType, int class
     return false;
 }
 
-float CargoShip::CargoContent::numItemsPerContainer(int numItems, float singleItemSize, float containerSize)
+float CargoShip::CargoContent::numItemsPerContainer(float singleItemSize, float containerSize)
 {
+    
     std::cout << "CargoContent::numItemsPerContainer(): total items "<< numItems << std::endl;
     return (containerSize/singleItemSize) * numItems;
 }
 
-void CargoShip::transportGoods(CargoContent kitchenItems, int amountOfContainers)
+void CargoShip::transportGoods(std::string contentTypeA, std::string contentTypeB, int amountOfContainers)
 {
-    kitchenItems.electronics = "toaster";
-    kitchenItems.furniture = "cupboard";
+    nextCargoLoad.contentA = contentTypeA;
+    nextCargoLoad.contentB = contentTypeB;
     numOfCargoContainers = amountOfContainers;
-    std::cout << "CargoContent::transportGoods(): total containers "<< numOfCargoContainers << std::endl;
+    std::cout << "CargoContent::transportGoods() type of goods: "<< contentTypeA << ',' << contentTypeB << std::endl;
 }
 
-void CargoShip::handleGoods(CargoContent randomMaterial, int numContainersToLoad, bool shipIsEmpty)
+void CargoShip::handleGoods(int numContainersToLoad, bool shipIsEmpty)
 {
-    randomMaterial.clothing = "socks";
-    randomMaterial.food = "apples";
     
     if(shipIsEmpty)
     {
-       numContainersToLoad /= deckSize; // ship loads amount that fits on deck size
+       numContainersToLoad = deckSize / numOfCargoContainers; // ship loads amount that fits on deck size
     }
     else
     {
         numContainersToLoad *= -1 ; // means ship unloads the amount of containers
     }
-    std::cout << "CargoContent::handleGoods() type of goods: "<< randomMaterial.clothing << std::endl;
+    std::cout << "CargoContent::handleGoods() amount to load/unload: "<< numContainersToLoad << std::endl;
 }
 
 void CargoShip::burnFuel(float consumptionPerKm, float travelDistance, bool shipIsLoaded)
@@ -506,7 +503,7 @@ struct NetworkingSystem
     NetworkingSystem();
 
     void setMultiplayerMode(std::string networkMode = "server", int numOfPlayers = 2);
-    std::string shareGameState(std::string platform = "Nintendo");
+    std::string identifyPlatform(std::string platform = "Nintendo");
     void sendDataToServer(float sendRate, float dataSize);
 };
 
@@ -524,9 +521,9 @@ void NetworkingSystem::setMultiplayerMode(std::string userMode, int numOfPlayers
     std::cout << "NetworkingSystem::setMultiplayerMode() " << networkMode << std::endl;
 }
 
-std::string NetworkingSystem::shareGameState(std::string platform)
+std::string NetworkingSystem::identifyPlatform(std::string platform)
 {
-    std::cout << "NetworkingSystem::shareGameState() platform used: " << platform << std::endl;
+    std::cout << "NetworkingSystem::identifyPlatform() platform used: " << platform << std::endl;
     return platform;
 }
 
@@ -587,9 +584,9 @@ struct GameEngine
     AI arificialIntelligence;
     GameEngine();
 
-    void editGraphics(RenderingEngine renderingEngine);
-    void implementAudio(AudioEngine audioEngine, std::string triggerEventName = "footsteps");
-    void getUserInput(NetworkingSystem networkSettings, std::string controllerType = "PS4");
+    void renderGraphics(std::string textureType);
+    void loadSoundFile(std::string pathToSoundFile, std::string triggerEventName = "footsteps");
+    void connectToPlatform(std::string controllerType = "PS4");
 };
 
 GameEngine::GameEngine()
@@ -597,26 +594,26 @@ GameEngine::GameEngine()
     std::cout << "GameEngine being constructed!" << std::endl;
 }
 
-void GameEngine::editGraphics(RenderingEngine newTexture)
+void GameEngine::renderGraphics(std::string textureType)
 {
-    newTexture.renderMaterialTexture("water", 6);
-    std::cout << "GameEngine::editGraphics() new texture: " << newTexture.materialTexture << std::endl;
+    renderingEngine.renderMaterialTexture(textureType, 6);
+    std::cout << "GameEngine::renderGraphics() rendering: " << textureType << " texture" << std::endl;
 }
 
-void GameEngine::implementAudio(AudioEngine implementSFX, std::string triggerEventName)
+void GameEngine::loadSoundFile(std::string pathToSoundFile, std::string triggerEventName)
 {
-    implementSFX.importSoundfile("/Sounds/SFX", triggerEventName, 2);
-    std::cout << "GameEngine::implementAudio() trigger event: " << triggerEventName << std::endl;
+    audioEngine.importSoundfile(pathToSoundFile, triggerEventName, 2);
+    std::cout << "GameEngine::loadSoundFile() trigger event: " << triggerEventName << std::endl;
 }
 
-void GameEngine::getUserInput(NetworkingSystem networkSettings, std::string controllerType)
+void GameEngine::connectToPlatform(std::string controllerType)
 {
-   std::string userPlatform = networkSettings.shareGameState();
+   std::string userPlatform = networking.identifyPlatform();
    if(userPlatform != controllerType)
    {
        std::cout << "Cannot connect controller to platform. Type mismatch\n";
    }
-   std::cout << "GameEngine::getUserInput() playing on: " << userPlatform << std::endl;
+   std::cout << "GameEngine::connectToPlatform() playing on: " << userPlatform << std::endl;
 }
 
 /*
@@ -643,7 +640,7 @@ int main()
     CoffeeMachine::Settings coffeeSettings;
 
     nespressoMachine.heatWater(95.0f);
-    nespressoMachine.dripWater(coffeeSettings, 4);
+    nespressoMachine.dripWater(4);
 
     coffeeSettings.setBrewStrength(3);
     coffeeSettings.setTimer(7, 8);
@@ -654,12 +651,12 @@ int main()
     CargoShip ship;
     CargoShip::CargoContent amazonItems;
     
-    ship.transportGoods(amazonItems, 250);
-    ship.handleGoods(amazonItems, 250, true);
+    ship.transportGoods("fridges", " washmachines", 250);
+    ship.handleGoods(250, true);
 
     amazonItems.contentIsFlammable("liquids", 3);
     amazonItems.contentIsToxic("corrosive", 2);
-    amazonItems.numItemsPerContainer(5000, 0.24f, 38.5f);
+    amazonItems.numItemsPerContainer(0.24f, 38.5f);
     std::cout << "Captain " << ship.captainName << " will lead this ship" << std::endl;
     std::cout << "-------------------" << std::endl;
    
@@ -688,15 +685,15 @@ int main()
     physicsEengine.destroyObject("explode", "simulated", 11);
     std::cout << "-------------------" << std::endl;
 
-    AudioEngine audioEngine;
-    audioEngine.importSoundfile("/sounds/effects", "explosion", 2);
-    audioEngine.editSound(1.15f, 4.0f);
-    audioEngine.playSound(256.0, 2, 0.0f, false);
+    AudioEngine audioEngineA;
+    audioEngineA.importSoundfile("/sounds/effects", "explosion", 2);
+    audioEngineA.editSound(1.15f, 4.0f);
+    audioEngineA.playSound(256.0, 2, 0.0f, false);
     std::cout << "-------------------" << std::endl;
 
     NetworkingSystem network;
     network.setMultiplayerMode("server", 4);
-    network.shareGameState("Nintendo");
+    network.identifyPlatform("Nintendo");
     network.sendDataToServer(60.0f, 24.0f);
     std::cout << "-------------------" << std::endl;
 
@@ -708,8 +705,8 @@ int main()
     std::cout << "-------------------" << std::endl;
 
     GameEngine gameEngine;
-    gameEngine.implementAudio(audioEngine, "gunshot");
-    gameEngine.getUserInput(network, "Xbox");
+    gameEngine.loadSoundFile("/Sounds/SFX/weapons", "gunshot");
+    gameEngine.connectToPlatform("Xbox");
     
     std::cout << "good to go!" << std::endl;
 }
