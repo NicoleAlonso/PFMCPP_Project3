@@ -685,10 +685,10 @@ int main()
     physicsEengine.destroyObject("explode", "simulated", 11);
     std::cout << "-------------------" << std::endl;
 
-    AudioEngine audioEngineA;
-    audioEngineA.importSoundfile("/sounds/effects", "explosion", 2);
-    audioEngineA.editSound(1.15f, 4.0f);
-    audioEngineA.playSound(256.0, 2, 0.0f, false);
+    AudioEngine audioEngine;
+    audioEngine.importSoundfile("/sounds/effects", "explosion", 2);
+    audioEngine.editSound(1.15f, 4.0f);
+    audioEngine.playSound(256.0, 2, 0.0f, false);
     std::cout << "-------------------" << std::endl;
 
     NetworkingSystem network;
