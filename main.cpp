@@ -125,11 +125,11 @@ void CoffeeMachine::maintainHeat(float timeToMaintain, float tempInCelsius)
 
 struct CargoShip
 {
-    int deckSize {12000};
-    float fuelTankSize {1.7f};
-    int numOfCargoContainers {1875};
-    std::string shipName {"Neptuno"};
-    std::string captainName {"James Cook"};
+    int deckSize;
+    float fuelTankSize;
+    int numOfCargoContainers;
+    std::string shipName;
+    std::string captainName;
     CargoShip();
 
     struct CargoContent
@@ -151,7 +151,12 @@ struct CargoShip
     CargoContent nextCargoLoad;
 };
 
-CargoShip::CargoShip()
+CargoShip::CargoShip() : 
+deckSize(12000), 
+fuelTankSize(1.7f), 
+numOfCargoContainers(1875),
+shipName("Neptuno"),
+captainName("James Cook") 
 {
     std::cout << "CargoShip being constructed!" << std::endl;
 }
@@ -232,7 +237,7 @@ void CargoShip::burnFuel(float consumptionPerKm, float travelDistance, bool ship
     }
      
     fuelBurned = consumptionPerKm * travelDistance;
-    std::cout << "CargoContent::burnFuel() " << fuelBurned << std::endl;
+    std::cout << "CargoContent::burnFuel() Ship "<< shipName << " consumed " << fuelBurned << " gallons" << std::endl;
 }
 
 struct Computer
@@ -278,10 +283,10 @@ void Computer::displayData(std::string fileName, bool fullscreen)
 
 struct Hotel
 {
-    int numSingleRooms {46};
-    int numDoubleRooms {62};
-    int numDailyGuests {77};
-    float priceDiscount {5.0f};
+    int numSingleRooms;
+    int numDoubleRooms;
+    int numDailyGuests;
+    float priceDiscount;
     std::string receptionistName {"Gabriel"};
     Hotel();
 
@@ -290,7 +295,7 @@ struct Hotel
     void chargeGuest(int amountOfDays, float pricePerDay, bool usedRoomService = false, float priceRoomService = 25.5f);
 };
 
-Hotel::Hotel()
+Hotel::Hotel() : numSingleRooms(46), numDoubleRooms(62), numDailyGuests(77), priceDiscount(5.0f)
 {
     std::cout << "Hotel being constructed!" << std::endl;
 }
@@ -304,7 +309,7 @@ void Hotel::provideLodging(Computer registerGuest, int daysToStay, bool isDouble
     if(isDoubleRoom)
         --numDoubleRooms;
 
-    std::cout << "Hotel::provideLodging() guest stays for: " << daysToStay << " days" << std::endl;
+    std::cout << "provideLodging() Amount of rooms available: " << numSingleRooms + numDoubleRooms << std::endl;
 }
 
 void Hotel::serveBreakfast(int numGuestToServe, bool isSober)
@@ -312,7 +317,7 @@ void Hotel::serveBreakfast(int numGuestToServe, bool isSober)
     if(!isSober)
         --numGuestToServe;
 
-    std::cout << "Hotel::serveBreakfast() amount of guests: " << numGuestToServe << std::endl;
+    std::cout << "serveBreakfast() From: " << numDailyGuests << " total guests, " << numGuestToServe << " get breakfast" << std::endl;
 }
 
 void Hotel::chargeGuest(int amountOfDays, float pricePerDay, bool usedRoomService, float priceRoomService)
@@ -322,16 +327,16 @@ void Hotel::chargeGuest(int amountOfDays, float pricePerDay, bool usedRoomServic
     if(usedRoomService)
         totalPrice += priceRoomService;
     
-    std::cout << "Hotel::chargeGuest() total price: " << totalPrice << '$' << std::endl;
+    std::cout << "chargeGuest() Guest charged by receptionist: " << receptionistName << std::endl;
 }
 
 struct RenderingEngine
 {
-    std::string lightingType {"spot light"};
-    double particleAmount {2300.0};
-    std::string materialTexture {"grass"}; 
-    float bloomAmountInPercentage {10.0f};
-    float cameraViewField {180.0f};
+    std::string lightingType;
+    double particleAmount;
+    std::string materialTexture; 
+    float bloomAmountInPercentage;
+    float cameraViewField;
     RenderingEngine();
 
     void renderLights(std::string lightingType, int renderQuality = 4);
@@ -339,7 +344,12 @@ struct RenderingEngine
     void updateCameraViewPosition(float cameraViewField, float positionX = 0.0f, float positionY = 0.0f);
 };
 
-RenderingEngine::RenderingEngine()
+RenderingEngine::RenderingEngine() : 
+lightingType("spotlight"), 
+particleAmount(2300.0),
+materialTexture("grass"),
+bloomAmountInPercentage(10.0f),
+cameraViewField(180.0f)
 {
     std::cout << "RenderingEgine being constructed!" << std::endl;
 }
@@ -581,7 +591,6 @@ void GameEngine::connectToPlatform(std::string controllerType)
    {
        std::cout << "Cannot connect controller to platform. Type mismatch\n";
    }
-   std::cout << "GameEngine::connectToPlatform() playing on: " << userPlatform << std::endl;
 }
 
 /*
@@ -620,11 +629,10 @@ int main()
     CargoShip::CargoContent amazonItems;
     
     ship.transportGoods("fridges", " washmachines", 250);
-    ship.handleGoods(250, true);
+    ship.burnFuel(80.5f, 800.0f, true);
 
     amazonItems.contentIsFlammable("liquids", 3);
     amazonItems.contentIsToxic("corrosive", 2);
-    amazonItems.numItemsPerContainer(0.24f, 38.5f);
     std::cout << "Captain " << ship.captainName << " will lead this ship" << std::endl;
     std::cout << "-------------------" << std::endl;
    
@@ -638,7 +646,6 @@ int main()
     marriotHotel.provideLodging(macBook, 12, true);
     marriotHotel.serveBreakfast(42, true);
     marriotHotel.chargeGuest(12, 87.9f, true, 25.5f);
-    std::cout << "Price discount for guest: "<< marriotHotel.priceDiscount << '%' << std::endl; 
     std::cout << "-------------------" << std::endl;
 
     RenderingEngine renderingEngine;
