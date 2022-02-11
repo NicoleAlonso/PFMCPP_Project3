@@ -93,14 +93,15 @@ struct CoffeeMachine
 
         void setTimer(int brewStart = 0, int minutesUntilShutOff = 20);
         void setBrewStrength(int brewStrength);
-        bool flashDescalingIndicator(int waterHardness, int numCyclesMade); 
+        bool flashDescalingIndicator(int waterHardness, int numCyclesMade);
+        void brewing(int numOrder, int cupsBrewed);
     };
 
     void heatWater(float tempInCelsius = 93.4f);
     void dripWater(int dripInterval = 2);
     void maintainHeat(float timeToMaintain = 5.5f, float tempInCelsius = 85.0f);
 
-    Settings newBrewSettings;
+    Settings brewSettings;
 };
 
 CoffeeMachine::CoffeeMachine()
@@ -137,6 +138,15 @@ bool CoffeeMachine::Settings::flashDescalingIndicator(int waterHardness, int num
     return false;
 }
 
+void CoffeeMachine::Settings::brewing(int numOrder, int cupsBrewed)
+{
+    for (;cupsBrewed < numOrder; ++cupsBrewed)
+    {
+        std::cout << "cups brewed: " << cupsBrewed << std::endl;
+    }
+    std::cout << "cups brewed: " << cupsBrewed << " -> Order is ready!" << std::endl;
+}
+
 void CoffeeMachine::heatWater(float heatTemp)
 {
     wattsOfHeatingElement /= heatTemp * 90;
@@ -145,8 +155,8 @@ void CoffeeMachine::heatWater(float heatTemp)
 
 void CoffeeMachine::dripWater(int dripPerSec)
 {
-    newBrewSettings.waterFlowSpeed += dripPerSec * numDripHoles;
-    std::cout << "CoffeeMachine::dripWater(): " << newBrewSettings.waterFlowSpeed << std::endl;
+    brewSettings.waterFlowSpeed += dripPerSec * numDripHoles;
+    std::cout << "CoffeeMachine::dripWater(): " << brewSettings.waterFlowSpeed << std::endl;
 }
 
 void CoffeeMachine::maintainHeat(float timeToMaintain, float tempInCelsius)
@@ -179,6 +189,7 @@ struct CargoShip
     void transportGoods(std::string contentTypeA, std::string contentTypeB, int amountOfContainers);
     void handleGoods(int amountOfContainers, bool shipIsEmpty = true);
     void burnFuel(float consumptionPerKm, float travelDistance, bool shipIsLoaded = true);
+    bool readyForDeparture(int containersLoaded, int containersToLoad); 
 
     CargoContent nextCargoLoad;
 };
@@ -272,18 +283,35 @@ void CargoShip::burnFuel(float consumptionPerKm, float travelDistance, bool ship
     std::cout << "CargoContent::burnFuel() Ship "<< shipName << " consumed " << fuelBurned << " gallons" << std::endl;
 }
 
+bool CargoShip::readyForDeparture(int containersLoaded, int containersToLoad)
+{
+    numOfCargoContainers = containersToLoad;
+    while(containersLoaded < numOfCargoContainers)
+    {
+        ++containersLoaded;
+        std::cout << "loading containers: " << containersLoaded << std::endl;
+        if(containersLoaded == numOfCargoContainers)
+        {
+            std::cout << "ship is ready for departure" << std::endl;
+            return true;
+        }
+    }
+    return false;
+}
+
 struct Computer
 {
     double storageInGb {500.0};
     float processorSpeed {3.5f};
     float displaySize {13.0f};
-    int numKeys {101};
+    int displayBrightness {80};
     std::string manufacturer {"Apple"};
     Computer();
 
     void storeData(int numFiles, int fileSize, std::string fileName = "unknown");
     void processData(float amountToProcess, float timeToProcess = 0.02f);
     void displayData(std::string fileName = "unknown", bool fullscreen = false);
+    void changeDisplayBrightness(int newBrightVal);
 };
 
 Computer::Computer()
@@ -313,6 +341,24 @@ void Computer::displayData(std::string fileName, bool fullscreen)
     std::cout << "Computer::displayData(): " << displayText << std::endl;
 }
 
+void Computer::changeDisplayBrightness(int newBrightVal)
+{
+    if(newBrightVal > displayBrightness)
+    {
+        for(; displayBrightness < newBrightVal; ++displayBrightness)
+        {
+            std::cout << "increasing brightness: " << displayBrightness << std::endl;
+        }
+    }
+    else
+    {
+        for(; displayBrightness > newBrightVal; --displayBrightness)
+        {
+            std::cout << "decreasing brightness: " << displayBrightness << std::endl;
+        }
+    }  
+}
+
 struct Hotel
 {
     int numSingleRooms;
@@ -325,6 +371,7 @@ struct Hotel
     void provideLodging(Computer registerGuest, int daysToStay = 2, bool isDoubleRoom = true);
     void serveBreakfast(int numGuestToServe = 65, bool isSober = true);
     void chargeGuest(int amountOfDays, float pricePerDay, bool usedRoomService = false, float priceRoomService = 25.5f);
+    int membershipBonus(int membershipDays, int regularPrice);
 };
 
 Hotel::Hotel() : numSingleRooms(46), numDoubleRooms(62), numDailyGuests(77), priceDiscount(5.0f)
@@ -362,10 +409,21 @@ void Hotel::chargeGuest(int amountOfDays, float pricePerDay, bool usedRoomServic
     std::cout << "chargeGuest() Guest charged by receptionist: " << receptionistName << std::endl;
 }
 
+int Hotel::membershipBonus(int memberPoints, int daysStaying)
+{   
+    int bonusPoints = 0;
+    for (int i = 0; i < daysStaying; ++i)
+    {
+        bonusPoints += 5;
+    }
+    std::cout << "Added " << bonusPoints << " new bonus points. Balance is now: " << memberPoints + bonusPoints << std::endl;
+    return bonusPoints;
+}
+
 struct RenderingEngine
 {
     std::string lightingType;
-    double particleAmount;
+    int particleAmount;
     std::string materialTexture; 
     float bloomAmountInPercentage;
     float cameraViewField;
@@ -374,11 +432,12 @@ struct RenderingEngine
     void renderLights(std::string lightingType, int renderQuality = 4);
     void renderMaterialTexture(std::string materialTexture = "stone", int renderQuality = 4, int numPolygons = 100);
     void updateCameraViewPosition(float cameraViewField, float positionX = 0.0f, float positionY = 0.0f);
+    void particleFalloff(int radius, int lightFalloff);
 };
 
 RenderingEngine::RenderingEngine() : 
 lightingType("spotlight"), 
-particleAmount(2300.0),
+particleAmount(2300),
 materialTexture("grass"),
 bloomAmountInPercentage(10.0f),
 cameraViewField(180.0f)
@@ -406,11 +465,20 @@ void RenderingEngine::updateCameraViewPosition(float currentViewField, float pos
     std::cout << "RenderingEngine::updateCameraViewPosition() " << cameraViewField << std::endl;
 }
 
+void RenderingEngine::particleFalloff(int radius, int lightFalloff)
+{
+    for(int i = 1; i < particleAmount; i += 100)
+    {
+        lightFalloff += i / radius;
+    }
+    std::cout << "light particles falloff per ms: " << lightFalloff << std::endl;
+}
+
 struct PhysicsEngine
 {
     std::string physicsType {"default"};
     std::string collisionResponse {"block"};
-    float gravity {1.0f};
+    float gravity {9.8f};
     float friction {4.0f};
     float raytracingDistance {100.0f};
     PhysicsEngine();
@@ -418,6 +486,7 @@ struct PhysicsEngine
     void detectCollision(float raytracingDistance);
     void setGravity(float gravity);
     void destroyObject(std::string collisionResponse = "hit", std::string physicsType = "simulated", int impactForce = 9);
+    float vehicleFriction(float tireFriction, int acceleration, int scale);
 };
 
 PhysicsEngine::PhysicsEngine()
@@ -451,6 +520,16 @@ void PhysicsEngine::destroyObject(std::string collisionType, std::string physics
     std::cout << "PhysicsEngine::destroyObject() impact force: " << impactForce << std::endl;
 }
 
+float PhysicsEngine::vehicleFriction(float tireFriction, int acceleration, int scale)
+{
+    for(int i = acceleration; i < 50; ++i)
+    {
+        friction = (tireFriction / scale) * i;
+        std::cout << "wheel friction: " << friction << std::endl;
+    }
+    return friction;
+}
+
 struct AudioEngine
 {
     int numChannels {2};
@@ -463,6 +542,7 @@ struct AudioEngine
     void importSoundfile(std::string filePath, std::string fileName, int numChannels);
     void editSound(float pitchMultiplier, float attenuationInDb = 6.0f);
     void playSound(double audioBufferSize, int numChannels, float volumeInDb = -3.0f, bool isAlreadyPlaying = false);
+    void adjustVolume(float newVolume);
 };
 
 AudioEngine::AudioEngine()
@@ -482,6 +562,7 @@ void AudioEngine::importSoundfile(std::string filePath, std::string fileName, in
     numChannels = audioChannels;
     std::cout << "AudioEngine::importSoundfile() " << typeSuffix << std::endl;
 }
+
 void AudioEngine::editSound(float newPitchValue, float fasterAttenuation)
 {
     pitchMultiplier = newPitchValue;
@@ -503,6 +584,24 @@ void AudioEngine::playSound(double bufferSizeSetting, int outputChannels, float 
     std::cout << "AudioEngine::playSound() volume: " << volumeInDb << " dB" << std::endl;
 }
 
+void AudioEngine::adjustVolume(float newVolume)
+{
+    if(volumeInDb < newVolume)
+    {
+        for(; volumeInDb < newVolume; ++volumeInDb)
+        {
+            std::cout << "increasing volume: " << volumeInDb << std::endl;
+        }
+    }
+    else
+    {
+        for(; volumeInDb > newVolume; --volumeInDb)
+        {
+            std::cout << "decreasing volume: " << volumeInDb << std::endl;
+        }
+    }
+}
+
 struct NetworkingSystem
 {
     std::string networkMode {"standalone"};
@@ -515,6 +614,7 @@ struct NetworkingSystem
     void setMultiplayerMode(std::string networkMode = "server", int numOfPlayers = 2);
     std::string identifyPlatform(std::string platform = "Nintendo");
     void sendDataToServer(float sendRate, float dataSize);
+    void connectPlayersOnline(int numPlayers);
 };
 
 NetworkingSystem::NetworkingSystem()
@@ -543,6 +643,19 @@ void NetworkingSystem::sendDataToServer(float currentSendRate, float dataSize)
     std::cout << "NetworkingSystem::sendDataToServer() bufferSize: " << readBufferSize << std::endl;
 }
 
+void NetworkingSystem::connectPlayersOnline(int numPlayers)
+{
+    if(networkMode == "server")
+    {
+        for(int i = 0; i < numPlayers; ++i)
+        {
+            std::cout << "players online: " << i << std::endl;
+        }
+    }
+    else
+        std::cout << "Not able to connect.Please check network mode" << std::endl;
+}
+
 struct AI
 {
     float acceptanceRadius {90.0f};
@@ -555,6 +668,7 @@ struct AI
     float getTargetLocation(float positionX = 10.0f, float positionY = 10.0f); 
     void moveToTarget(int moveVelocity, float acceptanceRadius = 50.5f);
     void setFocalPoint(float focalPoint, float oldPosition, float newPosition);
+    void perceptionTime(float stimuliTime);
 };
 
 AI::AI()
@@ -585,6 +699,18 @@ void AI::setFocalPoint(float newTargetPoint, float oldPosition, float newPositio
     std::cout << "AI::setFocalPoint() " << focalPoint << std::endl;
 }
 
+void AI::perceptionTime(float stimuliTime)
+{
+    stimuliAgeInSec = stimuliTime;
+    bool lostTarget = false;
+    for (float i = stimuliAgeInSec; i > 0; --i)
+    {
+        std::cout << "AI stimuli active for: " << i << "sec" << std::endl;
+        lostTarget = true;
+    }
+    std::cout << "Lost Target: "<< lostTarget << std::endl;
+}
+
 struct GameEngine
 {
     RenderingEngine renderingEngine;
@@ -597,6 +723,7 @@ struct GameEngine
     void renderGraphics(std::string textureType);
     void loadSoundFile(std::string pathToSoundFile, std::string triggerEventName = "footsteps");
     void connectToPlatform(std::string controllerType = "PS4");
+    float increaseFallSpeed(float seconds);
 };
 
 GameEngine::GameEngine()
@@ -625,6 +752,17 @@ void GameEngine::connectToPlatform(std::string controllerType)
    }
 }
 
+float GameEngine::increaseFallSpeed(float seconds)
+{
+    float fallSpeed = physicsEngine.gravity * seconds;
+    std::cout << "Initial fall speed for " << seconds << " sec: " << fallSpeed << std::endl;
+    for (auto i = physicsEngine.gravity; i < 9.83f; i += 0.01f)
+    {
+        fallSpeed = i * seconds;
+    }
+    std::cout << "Increased fall speed for " << seconds << " sec is now: " << fallSpeed << std::endl;
+    return fallSpeed;
+}
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
 
@@ -654,6 +792,7 @@ int main()
     coffeeSettings.setBrewStrength(3);
     coffeeSettings.setTimer(7, 8);
     coffeeSettings.flashDescalingIndicator(3, 101);
+    coffeeSettings.brewing(3, 1);
     std::cout << "machine will shut down in: " << coffeeSettings.minutesUntilShutOff << " minutes" << std::endl;
     std::cout << "-------------------" << std::endl;
 
@@ -662,6 +801,7 @@ int main()
     
     ship.transportGoods("fridges", " washmachines", 250);
     ship.burnFuel(80.5f, 800.0f, true);
+    ship.readyForDeparture(0, 5);
 
     amazonItems.contentIsFlammable("liquids", 3);
     amazonItems.contentIsToxic("corrosive", 2);
@@ -672,48 +812,57 @@ int main()
     macBook.storeData(5, 64, "invoices");
     macBook.processData(20.0f, 0.05f);
     macBook.displayData("new message", false);
+    macBook.changeDisplayBrightness(84);
+    std::cout << "display brightness is now at: " << macBook.displayBrightness << '%' << std::endl;
     std::cout << "-------------------" << std::endl;
 
     Hotel marriotHotel;
     marriotHotel.provideLodging(macBook, 12, true);
     marriotHotel.serveBreakfast(42, true);
     marriotHotel.chargeGuest(12, 87.9f, true, 25.5f);
+    marriotHotel.membershipBonus(240, 12);
     std::cout << "-------------------" << std::endl;
 
     RenderingEngine renderingEngine;
     renderingEngine.renderLights("skylight", 4);
     renderingEngine.renderMaterialTexture("glass", 3, 146);
     renderingEngine.updateCameraViewPosition(95.2f, 55.0f, 14.5f);
+    renderingEngine.particleFalloff(120, 16);
     std::cout << "-------------------" << std::endl;
 
-    PhysicsEngine physicsEengine;
-    physicsEengine.detectCollision(105.0f);
-    physicsEengine.setGravity(1.0f);
-    physicsEengine.destroyObject("explode", "simulated", 11);
+    PhysicsEngine physicsEngine;
+    physicsEngine.detectCollision(105.0f);
+    physicsEngine.setGravity(9.79f);
+    physicsEngine.destroyObject("explode", "simulated", 11);
+    physicsEngine.vehicleFriction(0.65f, 46, 2);
     std::cout << "-------------------" << std::endl;
 
     AudioEngine audioEngine;
     audioEngine.importSoundfile("/sounds/effects", "explosion", 2);
     audioEngine.editSound(1.15f, 4.0f);
     audioEngine.playSound(256.0, 2, 0.0f, false);
+    audioEngine.adjustVolume(-6.0f);
+    std::cout << "volume is now: " << audioEngine.volumeInDb << "dB" << std::endl;
     std::cout << "-------------------" << std::endl;
 
     NetworkingSystem network;
     network.setMultiplayerMode("server", 4);
     network.identifyPlatform("Nintendo");
     network.sendDataToServer(60.0f, 24.0f);
+    network.connectPlayersOnline(5);
     std::cout << "-------------------" << std::endl;
 
     AI ai;
     ai.getTargetLocation(45.0f, 10.0f);
     ai.moveToTarget(6, 65.5f);
     ai.setFocalPoint(55.0f, 23.5f, 47.0f);
-    std::cout << "AI perceives target with its " << ai.perceptionProperty << " during " << ai.stimuliAgeInSec << " seconds\n";
+    ai.perceptionTime(4.0);
     std::cout << "-------------------" << std::endl;
 
     GameEngine gameEngine;
     gameEngine.loadSoundFile("/Sounds/SFX/weapons", "gunshot");
-    gameEngine.connectToPlatform("Xbox");
+    gameEngine.connectToPlatform("Nintendo");
+    gameEngine.increaseFallSpeed(4.5f);
     
     std::cout << "good to go!" << std::endl;
 }
